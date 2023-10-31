@@ -11,7 +11,11 @@ public class MemoryManager
      */
    public MemoryManager(long size)
    {
-   
+	   MemoryAllocation sen = new MemoryAllocation(null, "", -1, -1, null);
+	   MemoryAllocation empty = new MemoryAllocation(sen, Free, 0, size, sen);
+	   sen.prev = empty;
+	   sen.next = empty;
+	   head = sen;
    }
 
 
@@ -24,6 +28,27 @@ public class MemoryManager
     
    public MemoryAllocation requestMemory(long size,String requester)
    {
+	  MemoryAllocation curr = head.next;
+	  long curr_pos = 0;
+	  while(curr != head) {
+		  if((curr.getLength() >= size) && curr.getOwner() == Free) {
+			  MemoryAllocation temp = new MemoryAllocation(curr.prev, requester, curr_pos, size, curr.next);
+			  if(curr.getLength() > size) {
+				  MemoryAllocation empty = new MemoryAllocation(temp, Free, (curr_pos + size), (curr.getLength() - size), curr.next);
+				  temp.next = empty;
+				  curr.prev.next = temp;
+				  curr.next.prev = empty;
+			  }
+			  else {
+				  curr.prev.next = temp;
+				  curr.next.prev = temp;
+			  }
+			  return temp;
+		  }
+		  
+		  curr_pos = curr_pos + curr.getLength();
+		  curr = curr.next;
+	  }
       return null;
    }
 
@@ -36,6 +61,20 @@ public class MemoryManager
      */
    public void returnMemory(MemoryAllocation mem)
    {
+	   MemoryAllocation curr = head.next;
+	   while(curr != head) {
+		   if(curr.getOwner() == mem.getOwner()) {
+			   mem.owner = Free;
+			   if(curr.freeCheck(curr.prev)) {
+				   curr.combine(curr.prev);
+			   }
+			   else if (curr.freeCheck(curr.next)) {
+				   curr.combine(curr.next);
+			   }
+		   }
+		   curr = curr.next;
+	   }
+	   
    }
     
 
