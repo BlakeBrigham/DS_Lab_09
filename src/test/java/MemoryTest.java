@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 class MemoryTest {
 
 	MemoryManager manager;
-	MemoryManager small;
 	MemoryAllocation a;
 	MemoryAllocation b;
 	MemoryAllocation c; 
@@ -14,7 +13,6 @@ class MemoryTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		manager = new MemoryManager(100);
-		small = new MemoryManager(50);
 	
 
 	}
@@ -86,13 +84,18 @@ class MemoryTest {
 	
 	@Test
 	void FailedTestCopy() {
+		MemoryManager small = new MemoryManager(70);
 		a = small.requestMemory(5, "a");
-		b = small.requestMemory(5, "b");
+		b = small.requestMemory(35, "b");
+		c = small.requestMemory(10, "c");
+		MemoryAllocation d = small.requestMemory(20, "d");
 		small.returnMemory(a);
+		small.returnMemory(c);
 		c = small.requestMemory(1,  "c");
-		MemoryAllocation d = small.requestMemory(5,  "d");
-		assertTrue(d.getOwner() == "d");
-		assertTrue(d.getPosition() == 10);
+		assertEquals(0, c.getPosition());
+		MemoryAllocation f = small.requestMemory(5,  "f");
+		assertTrue(f.getOwner() == "f");
+		assertTrue(f.getPosition() == 40);
 		
 		
 	}
