@@ -53,16 +53,18 @@ public class MemoryAllocation
     	return false;
     }
     
-    public void combine(MemoryAllocation mem) {
+    public MemoryAllocation combine(MemoryAllocation mem) {
     	if(this.pos > mem.pos) {
     		mem.len = mem.len + this.len;
     		mem.next = this.next;
     		this.next.prev = mem;
+    		return mem;
     	}
     	else {
     		this.len = mem.len + this.len;
     		this.next = mem.next;
     		mem.next.prev = this;
+    		return this;
     	}
     }
 }

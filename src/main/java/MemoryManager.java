@@ -61,23 +61,16 @@ public class MemoryManager
      */
    public void returnMemory(MemoryAllocation mem)
    {
-	   MemoryAllocation curr = head.next;
-	   while(curr != head) {
-		   if(curr.getOwner() == mem.getOwner()) {
-			   mem.owner = Free;
-			   if(curr.freeCheck(curr.prev)) {
-				   curr.combine(curr.prev);
-			   }
-			   else if (curr.freeCheck(curr.next)) {
-				   curr.combine(curr.next);
+	   MemoryAllocation curr = mem;
+	   mem.owner = Free;
+	   if(curr.freeCheck(curr.prev)) {
+		   curr = curr.combine(curr.prev);
+	   }
+	   if (curr.freeCheck(curr.next)) {
+			curr = curr.combine(curr.next);
 			   }
 		   }
-		   curr = curr.next;
-	   }
+		   
 	   
    }
-    
-
-
-
-}
+   

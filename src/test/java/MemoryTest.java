@@ -84,14 +84,21 @@ class MemoryTest {
 	
 	@Test
 	void FailedTestCopy() {
-		MemoryManager small = new MemoryManager(70);
+		MemoryManager small = new MemoryManager(100);
 		a = small.requestMemory(5, "a");
+		assertTrue(a.getPosition() == 0);
 		b = small.requestMemory(35, "b");
+		assertTrue(b.getPosition() == 5);
 		c = small.requestMemory(10, "c");
+		assertTrue(c.getPosition() == 40);
 		MemoryAllocation d = small.requestMemory(20, "d");
+		assertTrue(d.getPosition() == 50);
+		MemoryAllocation e = small.requestMemory(30, "e");
+		assertTrue(e.getPosition() == 70);
+		
 		small.returnMemory(a);
 		small.returnMemory(c);
-		c = small.requestMemory(1,  "c");
+		c = small.requestMemory(2,  "c");
 		assertEquals(0, c.getPosition());
 		MemoryAllocation f = small.requestMemory(5,  "f");
 		assertTrue(f.getOwner() == "f");
