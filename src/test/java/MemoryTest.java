@@ -14,7 +14,7 @@ class MemoryTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		manager = new MemoryManager(100);
-		small = new MemoryManager(10);
+		small = new MemoryManager(50);
 	
 
 	}
@@ -70,14 +70,30 @@ class MemoryTest {
 		
 		// Testing first-fit-scheme
 		manager.returnMemory(temp5);
+		manager.returnMemory(temp1); // free first 20
 		MemoryAllocation temp7 = manager.requestMemory(25, "g"); // Should be 30 at end, this leaves us at 5
 		assertTrue(temp7.getOwner() == "g");
-		manager.returnMemory(temp1); // free first 20
+		assertTrue(temp7.getPosition() == 70);
 		assertNull(manager.requestMemory(25, "h")); // no block of free memory over 20 atm
 		MemoryAllocation temp8 = manager.requestMemory(5, "h"); //Both blocks shuld fit 5, should go in first
 		assertTrue(temp8.getOwner() == "h");
 		assertEquals(0, temp8.getPosition());
 		assertNull(manager.requestMemory(20, "i")); //Biggest free space after should be 15, if we mess up it would not be null
+		
+		
+		
+	}
+	
+	@Test
+	void FailedTestCopy() {
+		a = small.requestMemory(5, "a");
+		b = small.requestMemory(5, "b");
+		small.returnMemory(a);
+		c = small.requestMemory(1,  "c");
+		MemoryAllocation d = small.requestMemory(5,  "d");
+		assertTrue(d.getOwner() == "d");
+		assertTrue(d.getPosition() == 10);
+		
 		
 	}
 
